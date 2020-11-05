@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainWindow"
+    tools:showIn="@layout/activity_main_window">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/itemCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            >
+
+            <ImageView
+                android:id="@+id/itemThumbnail"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                tools:srcCompat="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/itemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/itemThumbnail"
+                android:text="News Article Title"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/itemContents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/itemTitle"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/itemThumbnail"
+                android:ellipsize="end"
+                android:text="A news article. This is text that should be shortened if it reaches more than one line."
+                android:textSize="15sp"
+                android:textStyle="normal"
+
+                android:singleLine="false"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/itemContents"
+                android:padding="5dp">
+
+                <TextView
+                    android:id="@+id/itemSourceURL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="string/Source"
+                    android:textSize="10sp"
+                    />
+
+                <TextView
+                    android:id="@+id/itemLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/itemSourceURL"
+                    android:layout_marginTop="2dp"
+                    android:text="string/Location"
+                    android:textSize="10sp" />
+
+                <ImageButton
+                    android:id="@+id/saveBookmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@null"
+                    android:gravity="right"
+                    app:srcCompat="@android:drawable/ic_menu_save" />
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
