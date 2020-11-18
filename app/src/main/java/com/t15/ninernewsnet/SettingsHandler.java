@@ -5,7 +5,7 @@ import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
