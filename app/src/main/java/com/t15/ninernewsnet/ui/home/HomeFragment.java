@@ -4,10 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -16,8 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.t15.ninernewsnet.CustomAdapter;
 import com.t15.ninernewsnet.R;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -29,7 +25,7 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.home_feed, container, false);
+        View root = inflater.inflate(R.layout.fragment_home, container, false);
         //final CardView cardView = root.findViewById(R.id.itemCard);
         RecyclerView recyclerView = root.findViewById(R.id.recycleViewLayout);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
