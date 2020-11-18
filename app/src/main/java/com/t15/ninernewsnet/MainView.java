@@ -35,12 +35,16 @@ public class MainView extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+/*
         Intent myIntent = getIntent();
 
-        //setup user
-        NinerNewsNet user=(NinerNewsNet) getApplicationContext();
         //add user name from LoginView intent
-        user.setName(myIntent.getStringExtra("name"));
+        //user.setName(myIntent.getStringExtra("name"));
+
+*/
+
+        SettingsHandler settingsHandler = new SettingsHandler(this);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -58,7 +62,7 @@ public class MainView extends AppCompatActivity {
         //set sidemenu username
         View headerView = navigationView.getHeaderView(0);
         TextView username = (TextView) headerView.findViewById(R.id.username);
-        username.setText(user.getName());
+        username.setText(settingsHandler.getCurrentUser());
 
         //main feed
         RecyclerView recyclerView = findViewById(R.id.recycleViewLayout);

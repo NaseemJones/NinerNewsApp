@@ -14,6 +14,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.t15.ninernewsnet.R;
+import com.t15.ninernewsnet.SettingsHandler;
+
+import java.util.ArrayList;
 
 public class SettingsFragment extends Fragment {
 
@@ -25,6 +28,22 @@ public class SettingsFragment extends Fragment {
                 ViewModelProviders.of(this).get(SettingsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
         //final CardView cardView = root.findViewById(R.id.itemCard);
+
+
+        SettingsHandler settingsHandler = new SettingsHandler(getContext());
+
+        ArrayList<String> testData = new ArrayList<String>();
+        testData.add("a");
+        testData.add("b");
+        testData.add("c");
+        testData.add("d");
+
+        settingsHandler.setFeeds(testData);
+        settingsHandler.setBookmarks(testData);
+        settingsHandler.setFilters("Filters");
+        settingsHandler.setNotifications(1);
+        settingsHandler.setAutoupdate(1);
+
 
         final TextView textView = root.findViewById(R.id.text_settings);
         settingsViewModel.getText().observe(this, new Observer<String>() {
