@@ -1,18 +1,20 @@
 package com.t15.ninernewsnet;
 
 import android.os.Bundle;
-import android.content.Intent;
+
+import android.util.Log;
+import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.core.view.MenuItemCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.t15.ninernewsnet.ui.home.HomeFragment;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -25,34 +27,30 @@ import java.util.ArrayList;
 
 
 public class MainView extends AppCompatActivity {
-
+    private static final String TAG = "MainView";
     private AppBarConfiguration mAppBarConfiguration;
+    private static RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-/*
-        Intent myIntent = getIntent();
-
-        //add user name from LoginView intent
-        //user.setName(myIntent.getStringExtra("name"));
-
-*/
 
         SettingsHandler settingsHandler = new SettingsHandler(this);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        View header = navigationView.getHeaderView(0);
+        header.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+        //Fill the menu bar with fragments
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_bookmarks, R.id.nav_filters,
-                R.id.nav_settings)
+                R.id.nav_home, R.id.nav_bookmarks,
+                R.id.nav_settings, R.id.nav_about)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -65,7 +63,7 @@ public class MainView extends AppCompatActivity {
         username.setText(settingsHandler.getCurrentUser());
 
         //main feed
-        RecyclerView recyclerView = findViewById(R.id.recycleViewLayout);
+        recyclerView = findViewById(R.id.recycleViewLayout);
     }
 
     @Override
@@ -74,6 +72,11 @@ public class MainView extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+
 }
-
-

@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginView extends AppCompatActivity {
-
+    private static final String TAG = "LoginView";
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -24,6 +24,9 @@ public class LoginView extends AppCompatActivity {
             username.setText(settingsHandler.getCurrentUser());
         }
 
+        //Use dark statusbar
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -31,13 +34,10 @@ public class LoginView extends AppCompatActivity {
                 //app_prefs is protected
                 if(username.getText() != null && !name.equals("app_prefs") && !name.equals("")){
                     settingsHandler.setCurrentUser(name);
-
                     Intent myIntent = new Intent(v.getContext(), MainView.class);
                     // myIntent.putExtra("name", displayName);
                     startActivity(myIntent);
-
                 }
-                // else: notify wrong name
             }
         });
     }

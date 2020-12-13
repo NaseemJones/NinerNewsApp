@@ -8,11 +8,12 @@ import android.util.Log;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class SettingsHandler extends ContextWrapper {
-
+    private static final String TAG = "SettingsHandler";
     //context needs to be passed
     public SettingsHandler(Context base) {
         super(base);
@@ -23,17 +24,75 @@ public class SettingsHandler extends ContextWrapper {
     private SharedPreferences globalPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE);
     private SharedPreferences.Editor globalEditor =  globalPref.edit();
 
-
     public void setCurrentUser(String username) {
         globalEditor.putString("username",username);
         globalEditor.apply();
-        Log.i("SettingsHandler", username + " selected");
+        Log.d(TAG, username + " selected");
     }
 
     public String getCurrentUser() {
         return globalPref.getString("username", null);
     }
 
+    //Bookmarks
+    public ArrayList<CardModel> getBookmarks() {
+        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
+
+        Log.d(TAG, "Accessing bookmark data");
+
+        Gson gson = new Gson();
+        String json = userPrefs.getString("bookmarks", null);
+        Type type = new TypeToken<ArrayList<CardModel>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    public void setBookmarks(ArrayList<CardModel> bookmarks) {
+        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor =  userPrefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(bookmarks);
+        editor.putString("bookmarks", json);
+        editor.apply();
+        Log.d(TAG, getCurrentUser() + ": Bookmarks updated");
+    }
+
+
+    //Notifications
+    public boolean getNotifications() {
+        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
+        Log.d(TAG, "Accessing notification data");
+        return userPrefs.getBoolean("notifications",false);
+    }
+    public void setNotifications(boolean notificationOpt) {
+        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor =  userPrefs.edit();
+
+        editor.putBoolean("notifications",notificationOpt);
+
+        editor.apply();
+        Log.d(TAG, getCurrentUser() + ": notification setting updated");
+    }
+
+
+    //Autoupdate
+    public int getAutoupdate() {
+        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
+        Log.d(TAG, "Accessing autoupdate data");
+        return userPrefs.getInt("autoupdate",0);
+    }
+    public void setAutoupdate(int updateOpt) {
+        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor =  userPrefs.edit();
+
+        editor.putInt("autoupdate",updateOpt);
+
+        editor.apply();
+        Log.d(TAG, getCurrentUser() + ": autoupdate setting updated");
+    }
+
+
+    /*
+    // Unused functions for reference
 
     //Feeds
     public ArrayList<String> getFeeds() {
@@ -51,99 +110,7 @@ public class SettingsHandler extends ContextWrapper {
         String json = gson.toJson(feeds);
         editor.putString("feeds", json);
         editor.apply();
-        Log.i("SettingsHandler", getCurrentUser() + ": Feeds updated");
-    }
-
-    //Bookmarks
-    public ArrayList<String> getBookmarks() {
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = userPrefs.getString("bookmarks", null);
-        Type type = new TypeToken<ArrayList<String>>() {}.getType();
-        return gson.fromJson(json, type);
-    }
-    public void setBookmarks(ArrayList<String> bookmarks) {
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =  userPrefs.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(bookmarks);
-        editor.putString("bookmarks", json);
-        editor.apply();
-        Log.i("SettingsHandler", getCurrentUser() + ": Bookmarks updated");
-    }
-
-    //Filters
-    public String getFilters() {
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        return userPrefs.getString("filters",null);
-    }
-    public void setFilters(String filters) {
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =  userPrefs.edit();
-
-        editor.putString("filters",filters);
-
-        editor.apply();
-        Log.i("SettingsHandler", getCurrentUser() + ": Filters updated");
-    }
-
-    //Notifications
-    public int getNotifications() {
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        return userPrefs.getInt("notifications",0);
-    }
-    public void setNotifications(int notificationOpt) {
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =  userPrefs.edit();
-
-        editor.putInt("notifications",notificationOpt);
-
-        editor.apply();
-        Log.i("SettingsHandler", getCurrentUser() + ": notification setting updated");
-    }
-
-    //Autoupdate
-    public int getAutoupdate() {
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        return userPrefs.getInt("autoupdate",0);
-    }
-    public void setAutoupdate(int updateOpt) {
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =  userPrefs.edit();
-
-        editor.putInt("autoupdate",updateOpt);
-
-        editor.apply();
-        Log.i("SettingsHandler", getCurrentUser() + ": autoupdate setting updated");
-    }
-
-
-    //
-
-
-
-    /*
-
-
-    public void saveAllSettings() {
-        //may not be necessary
-        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =  userPrefs.edit();
-
-        editor.putString("feeds","feed[s]");
-        editor.putString("bookmarks","bookmark[s]");
-
-
-        editor.putString("filters","filter[s]");
-
-
-        editor.putInt("notifications",0);
-
-        editor.putInt("autoupdate",1);
-
-        editor.apply();
-        Log.i("NOTE",getCurrentUser() + ".xml saved");
-
+        Log.d(TAG, getCurrentUser() + ": Feeds updated");
     }
 
     public void saveSetting(String element, String data) {
@@ -153,7 +120,7 @@ public class SettingsHandler extends ContextWrapper {
         editor.putString(element,data);
 
         editor.apply();
-        Log.i("NOTE",getCurrentUser() + ".xml saved");
+        Log.d("NOTE",getCurrentUser() + ".xml saved");
 
     }
 
@@ -169,7 +136,7 @@ public class SettingsHandler extends ContextWrapper {
         File prefsdir = new File(getApplicationInfo().dataDir,"shared_prefs");
         for (final File prefs : prefsdir.listFiles()) {
             if (username.equals(prefs.getName().split("\\.")[0])) {
-                Log.i("NOTE",username + " found");
+                Log.d("NOTE",username + " found");
                 this.getCurrentUser() = username;
                 return true;
             }
