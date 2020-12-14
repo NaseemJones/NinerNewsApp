@@ -118,13 +118,7 @@ public class SettingsHandler extends ContextWrapper {
     }
 
 
-    //
-
-
-
     /*
-
-
     public void saveAllSettings() {
         //may not be necessary
         SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
@@ -177,5 +171,4 @@ public class SettingsHandler extends ContextWrapper {
         return false;
     }
     */
-
 }

@@ -16,4 +16,14 @@
     <string name="name">Name</string>
     <string name="start">START</string>
 
+    <string name="profile_select_button">Select Profile</string>
+    <string name="select_interval_button">Select Interval</string>
+    <string name="notification_options_button">Notification Options</string>
+
+    <string name="notification_settings_label">Notification on</string>
+    <string name="popup_alert_settings_label">Popup on</string>
+    <string name="notification_option_alerts">Alerts</string>
+    <string name="notification_option_new_articles">New Articles</string>
+
+    <string name="interval_update_option">Update every</string>
 </resources>

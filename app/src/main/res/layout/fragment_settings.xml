@@ -1,19 +1,270 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/text_settings"
+<!--
+    <ImageView
+        android:id="@+id/imageView3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:translationZ="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+-->
+
+    <!--  MAIN BUTTONS  -->
+    <ToggleButton
+        android:visibility="visible"
+        android:id="@+id/settings_profiles_toggle_button"
+        android:layout_width="333dp"
+        android:layout_height="45dp"
+        android:background="#AAAAAA"
+        android:textOff="@string/profile_select_button"
+        android:textOn="@string/profile_select_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.157" />
+
+    <ToggleButton
+        android:visibility="visible"
+        android:id="@+id/settings_interval_toggle_button"
+        android:layout_width="333dp"
+        android:layout_height="45dp"
+        android:background="#AAAAAA"
+        android:textOff="@string/select_interval_button"
+        android:textOn="@string/select_interval_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.269"
+        android:translationY="0dp"/>
+
+    <ToggleButton
+        android:visibility="visible"
+        android:id="@+id/settings_notification_toggle_button"
+        android:layout_width="333dp"
+        android:layout_height="45dp"
+        android:background="#AAAAAA"
+        android:textOff="@string/notification_options_button"
+        android:textOn="@string/notification_options_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.383"
+        android:translationY="0dp"/>
+
+
+    <!--  SELECT PROFILES CONTENT  -->
+
+    <ScrollView
+        android:id="@+id/profiles_menu_scrollable"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.351">
+
+        <TableLayout
+            android:id="@+id/profiles_menu_table"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        </TableLayout>
+    </ScrollView>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/update_interval_option_text"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="@string/interval_update_option"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.147"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.364" />
+
+    <NumberPicker
+        android:id="@+id/interval_number_picker"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.45"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.358" />
+
+    <Spinner
+        android:id="@+id/time_units_spinner"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.339" />
+
+    <Switch
+        android:visibility="gone"
+        android:id="@+id/settings_popup_on_new_articles_switch"
+        android:layout_width="50sp"
+        android:layout_height="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.651"
+        tools:ignore="UseSwitchCompatOrMaterialXml"/>
+
+    <Switch
+        android:visibility="gone"
+        android:id="@+id/settings_notif_on_alerts_switch"
+        android:layout_width="50sp"
+        android:layout_height="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.467"
+        tools:ignore="UseSwitchCompatOrMaterialXml"/>
+
+    <Switch
+        android:visibility="gone"
+        android:id="@+id/settings_popup_on_alerts_switch"
+        android:layout_width="50sp"
+        android:layout_height="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.602"
+        tools:ignore="UseSwitchCompatOrMaterialXml"/>
+
+    <Switch
+        android:visibility="gone"
+        android:id="@+id/settings_notif_on_new_articles_switch"
+        android:layout_width="50sp"
+        android:layout_height="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.515"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/settings_notifs_on_label"
+        android:layout_width="115sp"
+        android:layout_height="25sp"
+        android:text="@string/notification_settings_label"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.121"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.466" />
+
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/settings_notif_on_alerts_label"
+        android:layout_width="55sp"
+        android:layout_height="25sp"
+        android:text="@string/notification_option_alerts"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.598"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.466" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/settings_popup_on_alerts_label"
+        android:layout_width="55sp"
+        android:layout_height="25sp"
+        android:text="@string/notification_option_alerts"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.598"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.601" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/settings_popup_on_new_article_label"
+        android:layout_width="95sp"
+        android:layout_height="25sp"
+        android:text="@string/notification_option_new_articles"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.674"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.65" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/settings_popup_on_label"
+        android:layout_width="85sp"
+        android:layout_height="25sp"
+        android:text="@string/popup_alert_settings_label"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.11"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.601" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/settings_notif_on_new_articles_label"
+        android:layout_width="95sp"
+        android:layout_height="25sp"
+        android:text="@string/notification_option_new_articles"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.674"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.514" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
