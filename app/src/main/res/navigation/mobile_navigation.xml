@@ -18,15 +18,15 @@
         tools:layout="@layout/fragment_bookmarks" />
 
     <fragment
-        android:id="@+id/nav_filters"
-        android:name="com.t15.ninernewsnet.ui.filters.FiltersFragment"
-        android:label="@string/menu_filters"
-        tools:layout="@layout/fragment_filters" />
-
-    <fragment
         android:id="@+id/nav_settings"
         android:name="com.t15.ninernewsnet.ui.settings.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.t15.ninernewsnet.ui.about.AboutFragment"
+        android:label="@string/menu_about"
+        tools:layout="@layout/fragment_about" />
 
 </navigation>

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -36,6 +37,15 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.t15.ninernewsnet.R;
 import com.t15.ninernewsnet.SettingsHandler;
 
@@ -45,32 +55,20 @@ import java.util.List;
 import java.io.File;
 import java.io.File.*;
 
-public class SettingsFragment extends Fragment  implements AdapterView.OnItemSelectedListener {
-
-    private SettingsViewModel settingsViewModel;
+public class SettingsFragment extends Fragment { // implements AdapterView.OnItemSelectedListener
+    private static final String TAG = "SettingsFragment";
+    //private SettingsViewModel settingsViewModel;
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
+        //settingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_settings, container, false);
         //final CardView cardView = root.findViewById(R.id.itemCard);
 
-
         final SettingsHandler settingsHandler = new SettingsHandler(getContext());
 
-        ArrayList<String> testData = new ArrayList<String>();
-        testData.add("a");
-        testData.add("b");
-        testData.add("c");
-        testData.add("d");
-
-
-
-        settingsHandler.setFeeds(testData);
-        settingsHandler.setBookmarks(testData);
-        settingsHandler.setFilters("Filters");
-        settingsHandler.setNotifications(1);
-        settingsHandler.setAutoupdate(1);
+        //NOTE: removed the part where temporary settings were set because they interfered with
+        // retrieving stored user data upon reopening the app
 
         /* Implement buttons for Settings page - clicking the buttons opens more options for each category */
         final ToggleButton intervals_toggle_button = (ToggleButton) root.findViewById(R.id.settings_interval_toggle_button);
@@ -88,46 +86,42 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
         final Spinner time_units_spinner = (Spinner) root.findViewById(R.id.time_units_spinner);
 
         // locate notifications items
-        final Switch switch1 = (Switch) root.findViewById(R.id.settings_notif_on_alerts_switch);
-        final Switch switch2 = (Switch) root.findViewById(R.id.settings_notif_on_new_articles_switch);
-        final Switch switch3 = (Switch) root.findViewById(R.id.settings_popup_on_alerts_switch);
-        final Switch switch4 = (Switch) root.findViewById(R.id.settings_popup_on_new_articles_switch);
+        final Switch notifs_switch = (Switch) root.findViewById(R.id.settings_notif_on_new_articles_switch);
         final TextView notifs_label = (TextView) root.findViewById(R.id.settings_notifs_on_label);
-        final TextView popup_label = (TextView) root.findViewById(R.id.settings_popup_on_label);
-        final TextView notifs_on_alerts_label = (TextView) root.findViewById(R.id.settings_notif_on_alerts_label);
         final TextView notifs_on_articles_label = (TextView) root.findViewById(R.id.settings_notif_on_new_articles_label);
-        final TextView popup_on_alerts_label = (TextView) root.findViewById(R.id.settings_popup_on_alerts_label);
-        final TextView popup_on_articles_label = (TextView) root.findViewById(R.id.settings_popup_on_new_article_label);
 
         /* Implement Spinner on Settings page for interval options */
         List<String> interval_spinner_options = new ArrayList<String>();
         interval_spinner_options.add("minutes");
         interval_spinner_options.add("hours");
-        interval_spinner_options.add("days");
 
-        time_units_spinner.setOnItemSelectedListener(this); //set listener for interval spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, interval_spinner_options); // Create adapter for spinner
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // Drop down layout style - list view with radio button
         time_units_spinner.setAdapter(dataAdapter); // Attach data adapter to spinner
 
         /* Implement NumberPicker on Settings Page for interval options */
         interval_number_picker.setMinValue(0);
-        interval_number_picker.setMaxValue(10);
+        interval_number_picker.setMaxValue(59);
+        //
+
+        //get initial values for these objects based on what the user's current settings are
+        if(settingsHandler.getAutoupdate() > interval_number_picker.getMaxValue()){
+            interval_number_picker.setValue(settingsHandler.getAutoupdate() / 60); //set the value of the spinner to current value in user settings
+            time_units_spinner.setSelection(1); //set the units to hours
+        }else{
+            interval_number_picker.setValue(settingsHandler.getAutoupdate());
+            time_units_spinner.setSelection(0); //set the units to minutes
+        }
+
         interval_number_picker.setWrapSelectorWheel(true);
-        interval_number_picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                //TODO: Set update interval (autoupdate()?)
 
-                String text = "Changed from " + oldVal + " to " + newVal;
-                Toast.makeText(getParentFragment().getContext(), text, Toast.LENGTH_SHORT).show();
-            }
-        });
+        //create selection listeners for NumberPicker and Spinner for interval options
+        createIntervalSelectionListeners(settingsHandler, interval_number_picker, time_units_spinner);
 
-//*****************************************************************************************************************
+        //listeners for each toggle button on the page
         profiles_toggle_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+                if (isChecked) {  //executes when the profiles button is clicked
                     profiles_toggle_button.setBackgroundColor(getResources().getColor(R.color.colorAccent)); //change color of profiles button
 
                     //set visibility of profiles menu to visible
@@ -137,9 +131,10 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
                     intervals_toggle_button.setChecked(false);
                     notifications_toggle_button.setChecked(false);
 
+                    //
                     intervals_toggle_button.setTranslationY((float)600.0); // move intervals button to new position
                     notifications_toggle_button.setTranslationY((float)600.0); // move intervals button to new position
-                } else {
+                } else {    //executes when the profiles button is un-clicked
                     //set visibility of profiles menu to gone
                     profile_menu.setVisibility(View.GONE);
 
@@ -153,7 +148,7 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
 
         intervals_toggle_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+                if (isChecked) {  //executes when the intervals button is clicked
                     intervals_toggle_button.setBackgroundColor(getResources().getColor(R.color.colorAccent)); //change color of intervals button
 
                     //set visibility of intervals items to visible
@@ -166,7 +161,7 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
                     notifications_toggle_button.setChecked(false);
 
                     notifications_toggle_button.setTranslationY((float)150.0); // move intervals button to new position
-                } else {
+                } else {  //executes when the intervals button is un-clicked
                     //set visibility of intervals items to gone
                     interval_text.setVisibility(View.GONE);
                     interval_number_picker.setVisibility(View.GONE);
@@ -180,42 +175,27 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
 
         notifications_toggle_button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+                if (isChecked) { //executes when the notifications button is clicked
                     notifications_toggle_button.setBackgroundColor(getResources().getColor(R.color.colorAccent)); //change color of notifications button
 
                     //set visibility of notifications items to visible
-                    switch1.setVisibility(View.VISIBLE);
-                    switch2.setVisibility(View.VISIBLE);
-                    switch3.setVisibility(View.VISIBLE);
-                    switch4.setVisibility(View.VISIBLE);
+                    notifs_switch.setVisibility(View.VISIBLE);
                     notifs_label.setVisibility(View.VISIBLE);
-                    popup_label.setVisibility(View.VISIBLE);
-                    notifs_on_alerts_label.setVisibility(View.VISIBLE);
                     notifs_on_articles_label.setVisibility(View.VISIBLE);
-                    popup_on_alerts_label.setVisibility(View.VISIBLE);
-                    popup_on_articles_label.setVisibility(View.VISIBLE);
 
                     //set other buttons to unchecked
                     profiles_toggle_button.setChecked(false);
                     intervals_toggle_button.setChecked(false);
-                } else {
+                } else { //executes when the notifications button is un-clicked
                     notifications_toggle_button.setBackgroundColor(grayColorValue); //set color of notifications button
 
                     //set visibility of intervals items to gone
-                    switch1.setVisibility(View.GONE);
-                    switch2.setVisibility(View.GONE);
-                    switch3.setVisibility(View.GONE);
-                    switch4.setVisibility(View.GONE);
+                    notifs_switch.setVisibility(View.GONE);
                     notifs_label.setVisibility(View.GONE);
-                    popup_label.setVisibility(View.GONE);
-                    notifs_on_alerts_label.setVisibility(View.GONE);
                     notifs_on_articles_label.setVisibility(View.GONE);
-                    popup_on_alerts_label.setVisibility(View.GONE);
-                    popup_on_articles_label.setVisibility(View.GONE);
                 }
             }
         });
-
 
         /* Profile Menu - Load user profiles as buttons in a menu - doing this using a table layout of buttons */
         TableLayout table = (TableLayout) root.findViewById(R.id.profiles_menu_table);
@@ -227,8 +207,10 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
         float button_width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, dm);
         float button_height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, dm);
 
-
         String filename;
+
+        TableRow row;
+        Button profile_button;
         for(int i = 0; i < files.length; i++) {
             if(!files[i].getName().equalsIgnoreCase("app_prefs.xml")) { //skip this file
                 filename = files[i].getName();
@@ -236,9 +218,9 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
                 //profiles.add(filename);
 
                 //create a table row and a button in that row to make up the profile menu
-                TableRow row = new TableRow(getContext());
+                row = new TableRow(getContext());
                 row.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                Button profile_button = new Button(getContext());
+                profile_button = new Button(getContext());
                 profile_button.setWidth((int)button_width);
                 profile_button.setHeight((int)button_height);
 
@@ -247,39 +229,77 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
                 profile_button.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 profile_button.setAllCaps(false);
 
-                setProfileClickListener(settingsHandler, profile_button, filename, profiles_toggle_button);
+                setProfileClickListener(settingsHandler, profile_button, filename, profiles_toggle_button, interval_number_picker, time_units_spinner, notifs_switch);
                 row.addView(profile_button);
                 table.addView(row);
             }
         }
 
+        /* Notification options - update based on switch value */
+        notifs_switch.setChecked(settingsHandler.getNotifications()); //set value of switch to users current settings
+        notifs_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                settingsHandler.setNotifications(isChecked);
+                String bool = (isChecked)? "on. " : "off. ";
+                Toast.makeText(getContext(), "Notifications for new articles turned " + bool , Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return root;
     }
 
-    //Selection handlers for Interval spinner
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String item = parent.getItemAtPosition(position).toString(); // On selecting a spinner item
-        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();// Show selection in a Toast popup
+    private void createIntervalSelectionListeners(final SettingsHandler settingsHandler, final NumberPicker numberPicker, final Spinner spinner){
+        numberPicker.setOnScrollListener(new NumberPicker.OnScrollListener(){
+            @Override
+            public void onScrollStateChange(NumberPicker numberPicker, int scrollState) {
+                if (scrollState == NumberPicker.OnScrollListener.SCROLL_STATE_IDLE) {
+                    int value = numberPicker.getValue();
+                    String unit = (String)spinner.getSelectedItem();
+                    if(unit.equalsIgnoreCase("hours")){
+                        // if the user has selected hours, multiply the NumberPicker's value by 60 since the default unit is in minutes
+                        settingsHandler.setAutoupdate(value * 60);
+                    }else{
+                        settingsHandler.setAutoupdate(value);
+                    }
+                    Toast.makeText(getContext(), "Selected: Automatically update feed after " + value + " " + unit , Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
-        // Add actual code to change the update interval
-        //TODO
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int value = numberPicker.getValue();
+                String unit = parent.getItemAtPosition(position).toString(); // get the selected item
+                Toast.makeText(parent.getContext(), "Selected: Automatically update feed after " + value + " " + unit , Toast.LENGTH_SHORT).show();
+                if(unit.equalsIgnoreCase("hours")){
+                    // if the user has selected hours, multiply the NumberPicker's value by 60 since the default unit is in minutes
+                    settingsHandler.setAutoupdate(value * 60);
+                }else{
+                    settingsHandler.setAutoupdate(value);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                parent.setSelection(0);
+            }
+        });
     }
 
-    public void onNothingSelected(AdapterView<?> arg0) {
-        // TODO Auto-generated method stub
-        // Do i need code here???
-    }
-
-    private void setProfileClickListener(final SettingsHandler sh, Button b, final String text, final ToggleButton profile_menu){
+    //click listener for the buttons in the profiles menu
+    private void setProfileClickListener(final SettingsHandler sh, Button b, final String text, final ToggleButton profile_menu,
+                                         final NumberPicker numberPicker, final Spinner spinner, final Switch sw){
         try {
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     sh.setCurrentUser(text);
-                    Toast.makeText(getContext(), "Profile Selected: " + text, Toast.LENGTH_LONG).show();// Show selection in a Toast popup
+
+                    Toast.makeText(getContext(), "Profile Selected: " + text, Toast.LENGTH_SHORT).show();// Show selection in a Toast popup
                     //close profile_toggle_button
                     profile_menu.setChecked(false);
+                    onChangeUser(sh, numberPicker, spinner, sw);
                 }
             });
         }catch(NullPointerException npe){
@@ -287,4 +307,16 @@ public class SettingsFragment extends Fragment  implements AdapterView.OnItemSel
         }
     }
 
+    //sets the states of the buttons to the values of the new user's settings
+    private void onChangeUser(final SettingsHandler settingsHandler, final NumberPicker numberPicker, final Spinner spinner, final Switch sw){
+        if(settingsHandler.getAutoupdate() > numberPicker.getMaxValue()){
+            numberPicker.setValue(settingsHandler.getAutoupdate() / 60); //set the value of the spinner to current value in user settings
+            spinner.setSelection(1); //set the units to hours
+        }else{
+            numberPicker.setValue(settingsHandler.getAutoupdate());
+            spinner.setSelection(0); //set the units to minutes
+        }
+
+        sw.setChecked(settingsHandler.getNotifications());
+    }
 }
