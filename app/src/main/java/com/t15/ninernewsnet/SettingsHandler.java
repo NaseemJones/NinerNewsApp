@@ -27,6 +27,11 @@ public class SettingsHandler extends ContextWrapper {
     public void setCurrentUser(String username) {
         globalEditor.putString("username",username);
         globalEditor.apply();
+        //when a new user is set, attempt to create a skeleton profile
+        //this does nothing to change existing settings
+        SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor =  userPrefs.edit();
+        editor.apply();
         Log.d(TAG, username + " selected");
     }
 
@@ -63,6 +68,7 @@ public class SettingsHandler extends ContextWrapper {
         Log.d(TAG, "Accessing notification data");
         return userPrefs.getBoolean("notifications",false);
     }
+
     public void setNotifications(boolean notificationOpt) {
         SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor =  userPrefs.edit();
@@ -80,6 +86,7 @@ public class SettingsHandler extends ContextWrapper {
         Log.d(TAG, "Accessing autoupdate data");
         return userPrefs.getInt("autoupdate",0);
     }
+
     public void setAutoupdate(int updateOpt) {
         SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor =  userPrefs.edit();
