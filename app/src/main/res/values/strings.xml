@@ -30,5 +30,9 @@
     <string name="articles_updated">Articles Updated</string>
     <string name="new_articles">New articles are available</string>
 
+    <string name="item_search">Search</string>
+    <string name="item_local">Local news</string>
+    <string name="item_uncc">UNCC news</string>
+
     <string name="app_hello">Hello!</string>
 </resources>

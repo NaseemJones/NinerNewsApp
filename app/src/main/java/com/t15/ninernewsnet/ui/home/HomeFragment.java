@@ -35,9 +35,7 @@ import com.t15.ninernewsnet.CardRecyclerAdapter;
 import com.t15.ninernewsnet.FeedFetcher;
 import com.t15.ninernewsnet.MainView;
 import com.t15.ninernewsnet.R;
-import com.t15.ninernewsnet.FeedFetcherUNCC;
 import com.t15.ninernewsnet.SettingsHandler;
-import com.t15.ninernewsnet.TestData;
 
 import java.util.ArrayList;
 
@@ -69,7 +67,12 @@ public class HomeFragment extends Fragment {
 
         //Populate card data from feed fetcher
         cardData = new ArrayList<CardModel>();
-        cardData.addAll(feedData.getFeedItems(viewCounter, cardsPerPage));
+
+        if (settingsHandler.getLocalFeed()) {
+            cardData.addAll(feedData.getFeedItems(viewCounter, cardsPerPage));
+        } else {
+            cardData.addAll(feedData.getFeedItemsUNCC(viewCounter));
+        }
 
         cardRecyclerAdapter = new CardRecyclerAdapter(cardData);
 
@@ -85,8 +88,15 @@ public class HomeFragment extends Fragment {
                     Log.d(TAG, "Bottom reached, loading new data");
 
                     viewCounter += 1;
-                    for(CardModel card : feedData.getFeedItems(viewCounter,cardsPerPage)) {
-                        cardData.add(card);
+                    if (settingsHandler.getLocalFeed()) {
+                        for(CardModel card : feedData.getFeedItems(viewCounter,cardsPerPage)) {
+                            cardData.add(card);
+                        }
+                    } else
+                    {
+                        for(CardModel card : feedData.getFeedItemsUNCC(viewCounter)) {
+                            cardData.add(card);
+                        }
                     }
 
                     cardRecyclerAdapter.notifyDataSetChanged();
@@ -127,18 +137,19 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //connect search button with search menu
-        inflater.inflate(R.menu.menu_search, menu);
+        inflater.inflate(R.menu.menu_search_options, menu);
 
         SearchManager searchManager = (SearchManager) getContext().getSystemService(Context.SEARCH_SERVICE);
 
         searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
+
+
+
 
         //If text is changed or submitted, apply the filter
         // Do not apply if there are no cards, and clear the filter if the query is empty
@@ -174,6 +185,16 @@ public class HomeFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) { return true; }
+            if(id == R.id.action_uncc_feed) {
+                settingsHandler.setLocalFeed(false);
+                updateCards();
+            }
+            if(id == R.id.action_local_feed) {
+                settingsHandler.setLocalFeed(true);
+                updateCards();
+            }
+
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -193,7 +214,11 @@ public class HomeFragment extends Fragment {
          */
 
         viewCounter = 1;
-        cardData.addAll(feedData.getFeedItems(viewCounter,cardsPerPage));
+        if (settingsHandler.getLocalFeed()) {
+            cardData.addAll(feedData.getFeedItems(viewCounter,cardsPerPage));
+        } else {
+            cardData.addAll(feedData.getFeedItemsUNCC(viewCounter));
+        }
 
         cardRecyclerAdapter.notifyDataSetChanged();
 

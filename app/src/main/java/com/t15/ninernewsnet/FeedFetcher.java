@@ -6,8 +6,15 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.HttpStatusException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.HttpEntity;
@@ -21,10 +28,10 @@ import cz.msebera.android.httpclient.util.EntityUtils;
 public class FeedFetcher {
     private static final String TAG = "FeedFetcher";
 
-    private final String searchTags = "Charlotte+AND+(NC+OR+Carolina)+NOT+(Royals+OR+Princess)";
-    private final String excludeDomains = "bbc.co.uk,in.reuters.com,ca.reuters.com,nytimes.com,people.com,ca.nbc.com,thenews.com.pk,huffpost.com,thesimpledollar.com,design-milk.com";
-
     public ArrayList<CardModel> getFeedItems(int page, int elements) {
+        String searchTags = "Charlotte+AND+(NC+OR+Carolina)+NOT+(Royals+OR+Princess)";
+        String excludeDomains = "bbc.co.uk,in.reuters.com,ca.reuters.com,nytimes.com,people.com,ca.nbc.com,thenews.com.pk,huffpost.com,thesimpledollar.com,design-milk.com";
+
         String url = "https://newsapi.org/v2/everything?q=" + searchTags + "&excludeDomains=" + excludeDomains + "&sources?language=en&apiKey=4d6fb178378f44d6aedf55ac7af74130&page=" + page + "&pageSize=" + elements;
         ArrayList<CardModel> cardData = new ArrayList<CardModel>();
 
@@ -70,6 +77,51 @@ public class FeedFetcher {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+
+        return cardData;
+
+    }
+
+    //Fetches articles from inside uncc's site for testing
+    public ArrayList<CardModel> getFeedItemsUNCC(int page) {
+        String url = "https://inside.uncc.edu/news-features?page=";
+        ArrayList<CardModel> cardData = new ArrayList<CardModel>();
+        String feedPage = url + page;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        Log.d(TAG, "Attempting to fetch " + feedPage);
+        try {
+            Document doc = Jsoup.connect(feedPage).get();
+            Elements elements = doc.select("div.article");
+
+            for (int i = 0; i < elements.size(); i++) {
+                Element element = elements.get(i);
+
+                String description = element.getElementsByClass("article-teaser").text();
+
+                String imageURL;
+                //Don't fail on no image
+                try {
+                    imageURL = element.getElementsByClass("img-responsive").first().absUrl("src");
+                } catch (NullPointerException e) {
+                    imageURL = "null";
+                }
+
+                String link = element.getElementsByClass("article-title").first().getElementsByIndexEquals(1).attr("abs:href");
+
+                CardModel card = new CardModel(description, imageURL, link, null);
+                Log.d(TAG, "Card fetched and parsed: " + link);
+                cardData.add(card);
+            }
+        } catch (HttpStatusException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (SocketTimeoutException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
         }
 
         return cardData;
