@@ -25,7 +25,7 @@ public class FeedFetcher {
     private final String excludeDomains = "bbc.co.uk,in.reuters.com,ca.reuters.com,nytimes.com,people.com,ca.nbc.com,thenews.com.pk,huffpost.com,thesimpledollar.com,design-milk.com";
 
     public ArrayList<CardModel> getFeedItems(int page, int elements) {
-        String url = "https://newsapi.org/v2/everything?q=" + searchTags + "&excludeDomains=" + excludeDomains + "&sources?language=en&apiKey=cb29beb081534634abaffb9c35d483ce&page=" + page + "&pageSize=" + elements;
+        String url = "https://newsapi.org/v2/everything?q=" + searchTags + "&excludeDomains=" + excludeDomains + "&sources?language=en&apiKey=4d6fb178378f44d6aedf55ac7af74130&page=" + page + "&pageSize=" + elements;
         ArrayList<CardModel> cardData = new ArrayList<CardModel>();
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
