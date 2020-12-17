@@ -202,7 +202,7 @@ public class HomeFragment extends Fragment {
     public boolean updateCards() {
         Log.d(TAG, "Refresh data");
 
-        ArrayList<CardModel> oldData = new ArrayList<CardModel>(cardData.subList(0, cardsPerPage));
+        ArrayList<CardModel> oldData = new ArrayList<CardModel>(cardData.subList(0, cardData.size()));
 
         //reload data
         cardData.clear();

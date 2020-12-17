@@ -31,6 +31,7 @@ import android.widget.ToggleButton;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -46,6 +47,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.navigation.NavigationView;
 import com.t15.ninernewsnet.R;
 import com.t15.ninernewsnet.SettingsHandler;
 

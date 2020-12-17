@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,6 +31,7 @@ public class MainView extends AppCompatActivity {
     private static final String TAG = "MainView";
     private AppBarConfiguration mAppBarConfiguration;
     private static RecyclerView recyclerView;
+    SettingsHandler settingsHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class MainView extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        SettingsHandler settingsHandler = new SettingsHandler(this);
+        settingsHandler = new SettingsHandler(this);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -57,11 +59,6 @@ public class MainView extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        //set sidemenu username
-        View headerView = navigationView.getHeaderView(0);
-        TextView username = (TextView) headerView.findViewById(R.id.username);
-        username.setText(settingsHandler.getCurrentUser());
-
         //main feed
         recyclerView = findViewById(R.id.recycleViewLayout);
     }
@@ -74,9 +71,12 @@ public class MainView extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
+    public boolean onCreateOptionsMenu(Menu menu) { return true; }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        TextView username = (TextView) findViewById(R.id.username);
+        username.setText(settingsHandler.getCurrentUser());
+        return super.onOptionsItemSelected(menuItem);
     }
-
-
 }
