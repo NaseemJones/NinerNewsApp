@@ -82,18 +82,18 @@ public class SettingsHandler extends ContextWrapper {
     //Current feed
     public boolean getLocalFeed() {
         SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
-        Log.d(TAG, "Accessing notification data");
-        return userPrefs.getBoolean("notifications",true);
+        Log.d(TAG, "Getting last used feed");
+        return userPrefs.getBoolean("localfeed",true);
     }
 
-    public void setLocalFeed(boolean notificationOpt) {
+    public void setLocalFeed(boolean feedOpt) {
         SharedPreferences userPrefs = getSharedPreferences(getCurrentUser(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor =  userPrefs.edit();
 
-        editor.putBoolean("notifications",notificationOpt);
+        editor.putBoolean("localfeed",feedOpt);
 
         editor.apply();
-        Log.d(TAG, getCurrentUser() + ": notification setting updated");
+        Log.d(TAG, getCurrentUser() + ": set current feed");
     }
 
 
